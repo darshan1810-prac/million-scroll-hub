@@ -1,6 +1,6 @@
 // Generate 1 million customer records
 export interface Customer {
-  id: number;
+  id: string;
   name: string;
   phone: string;
   email: string;
@@ -12,13 +12,7 @@ export interface Customer {
 
 const firstNames = ['John', 'Jane', 'Michael', 'Sarah', 'David', 'Emma', 'Chris', 'Lisa', 'James', 'Mary', 'Robert', 'Patricia', 'William', 'Jennifer', 'Richard', 'Linda'];
 const lastNames = ['Smith', 'Johnson', 'Williams', 'Brown', 'Jones', 'Garcia', 'Miller', 'Davis', 'Rodriguez', 'Martinez', 'Wilson', 'Anderson', 'Taylor', 'Thomas', 'Moore', 'Jackson'];
-const addedByUsers = ['Admin', 'Sales Team', 'Support', 'Marketing', 'Manager'];
-
-// Generate deterministic avatar color based on ID
-const getAvatarColor = (id: number): string => {
-  const colors = ['#3b82f6', '#8b5cf6', '#ec4899', '#f59e0b', '#10b981', '#06b6d4'];
-  return colors[id % colors.length];
-};
+const addedByUsers = ['Karthikey Mishra', 'Sarah Johnson', 'Mike Chen', 'Emily Davis', 'Tom Wilson'];
 
 // Generate phone number
 const generatePhone = (id: number): string => {
@@ -48,16 +42,18 @@ export const generateCustomers = (count: number): Customer[] => {
     const firstName = firstNames[i % firstNames.length];
     const lastName = lastNames[Math.floor(i / firstNames.length) % lastNames.length];
     const name = `${firstName} ${lastName}`;
+    const phone = generatePhone(i);
+    const avatarId = (i % 70) + 1;
     
     customers.push({
-      id: i,
+      id: phone,
       name,
-      phone: generatePhone(i),
+      phone,
       email: generateEmail(firstName, lastName, i),
       score: Math.floor(Math.random() * 100),
       lastMessageAt: generateLastMessageAt(i),
       addedBy: addedByUsers[i % addedByUsers.length],
-      avatar: getAvatarColor(i),
+      avatar: `https://i.pravatar.cc/150?img=${avatarId}`,
     });
   }
   

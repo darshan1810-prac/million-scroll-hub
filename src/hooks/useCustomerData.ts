@@ -4,11 +4,20 @@ import { Customer, getCustomers } from '@/utils/dataGenerator';
 export type SortField = 'name' | 'email' | 'phone' | 'score' | 'lastMessageAt';
 export type SortOrder = 'asc' | 'desc' | null;
 
+export type FilterType = 'score' | 'dateRange' | 'addedBy' | 'status';
+
+export interface ActiveFilter {
+  type: FilterType;
+  label: string;
+  value?: string;
+}
+
 export const useCustomerData = () => {
   const [searchQuery, setSearchQuery] = useState('');
   const [debouncedSearch, setDebouncedSearch] = useState('');
   const [sortField, setSortField] = useState<SortField | null>(null);
   const [sortOrder, setSortOrder] = useState<SortOrder>(null);
+  const [activeFilters, setActiveFilters] = useState<ActiveFilter[]>([]);
 
   // Get all customers once
   const allCustomers = useMemo(() => getCustomers(), []);
@@ -36,6 +45,21 @@ export const useCustomerData = () => {
           customer.phone.toLowerCase().includes(query)
       );
     }
+
+    // Apply active filters
+    activeFilters.forEach((filter) => {
+      if (filter.type === 'score') {
+        const match = filter.value?.match(/(\d+)-(\d+)/);
+        if (match) {
+          const [, min, max] = match;
+          result = result.filter(
+            (c) => c.score >= parseInt(min) && c.score <= parseInt(max)
+          );
+        }
+      } else if (filter.type === 'addedBy' && filter.value) {
+        result = result.filter((c) => c.addedBy === filter.value);
+      }
+    });
 
     // Apply sorting
     if (sortField && sortOrder) {
@@ -70,6 +94,20 @@ export const useCustomerData = () => {
     });
   }, [sortField]);
 
+  const addFilter = useCallback((filter: ActiveFilter) => {
+    setActiveFilters((prev) => {
+      const exists = prev.some((f) => f.type === filter.type && f.value === filter.value);
+      if (exists) return prev;
+      return [...prev, filter];
+    });
+  }, []);
+
+  const removeFilter = useCallback((filter: ActiveFilter) => {
+    setActiveFilters((prev) =>
+      prev.filter((f) => !(f.type === filter.type && f.value === filter.value))
+    );
+  }, []);
+
   return {
     customers: filteredAndSortedCustomers,
     searchQuery,
@@ -79,5 +117,8 @@ export const useCustomerData = () => {
     handleSort,
     totalCount: allCustomers.length,
     filteredCount: filteredAndSortedCustomers.length,
+    activeFilters,
+    addFilter,
+    removeFilter,
   };
 };

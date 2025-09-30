@@ -10,8 +10,8 @@ export interface Customer {
   avatar: string;
 }
 
-const firstNames = ['John', 'Jane', 'Michael', 'Sarah', 'David', 'Emma', 'Chris', 'Lisa', 'James', 'Mary', 'Robert', 'Patricia', 'William', 'Jennifer', 'Richard', 'Linda'];
-const lastNames = ['Smith', 'Johnson', 'Williams', 'Brown', 'Jones', 'Garcia', 'Miller', 'Davis', 'Rodriguez', 'Martinez', 'Wilson', 'Anderson', 'Taylor', 'Thomas', 'Moore', 'Jackson'];
+const firstNames = ['John', 'Jane', 'Michael', 'Sarah', 'David', 'Emma', 'Chris', 'Lisa', 'James', 'Mary', 'Robert', 'Patricia', 'William', 'Jennifer', 'Richard', 'Linda', 'Daniel', 'Jessica', 'Matthew', 'Ashley', 'Anthony', 'Amanda', 'Mark', 'Melissa', 'Donald', 'Deborah', 'Steven', 'Stephanie', 'Andrew', 'Rebecca', 'Kenneth', 'Laura', 'Joshua', 'Sharon', 'Kevin', 'Cynthia', 'Brian', 'Kathleen', 'George', 'Amy'];
+const lastNames = ['Smith', 'Johnson', 'Williams', 'Brown', 'Jones', 'Garcia', 'Miller', 'Davis', 'Rodriguez', 'Martinez', 'Wilson', 'Anderson', 'Taylor', 'Thomas', 'Moore', 'Jackson', 'Martin', 'Lee', 'Thompson', 'White', 'Harris', 'Sanchez', 'Clark', 'Ramirez', 'Lewis', 'Robinson', 'Walker', 'Young', 'Allen', 'King', 'Wright', 'Scott', 'Torres', 'Nguyen', 'Hill', 'Flores', 'Green', 'Adams', 'Nelson', 'Baker'];
 const addedByUsers = ['Karthikey Mishra', 'Sarah Johnson', 'Mike Chen', 'Emily Davis', 'Tom Wilson'];
 
 // Generate phone number
@@ -39,20 +39,23 @@ export const generateCustomers = (count: number): Customer[] => {
   const customers: Customer[] = [];
   
   for (let i = 1; i <= count; i++) {
-    const firstName = firstNames[i % firstNames.length];
-    const lastName = lastNames[Math.floor(i / firstNames.length) % lastNames.length];
+    const firstNameIndex = (i * 7 + 13) % firstNames.length;
+    const lastNameIndex = (i * 11 + 17) % lastNames.length;
+    const firstName = firstNames[firstNameIndex];
+    const lastName = lastNames[lastNameIndex];
     const name = `${firstName} ${lastName}`;
     const phone = generatePhone(i);
     const avatarId = (i % 70) + 1;
+    const scoreBase = (i * 31) % 100;
     
     customers.push({
       id: phone,
       name,
       phone,
       email: generateEmail(firstName, lastName, i),
-      score: Math.floor(Math.random() * 100),
+      score: scoreBase,
       lastMessageAt: generateLastMessageAt(i),
-      addedBy: addedByUsers[i % addedByUsers.length],
+      addedBy: addedByUsers[(i * 3) % addedByUsers.length],
       avatar: `https://i.pravatar.cc/150?img=${avatarId}`,
     });
   }

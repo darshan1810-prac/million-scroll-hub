@@ -82,7 +82,7 @@ export const useCustomerData = () => {
     }
 
     return result;
-  }, [allCustomers, debouncedSearch, sortField, sortOrder]);
+  }, [allCustomers, debouncedSearch, sortField, sortOrder, activeFilters]);
 
   const handleSort = useCallback((field: SortField) => {
     setSortField(field);
